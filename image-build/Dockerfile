@@ -1,11 +1,10 @@
 FROM --platform=linux/386 docker.io/i386/alpine:3.17
 
 RUN echo '@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories \
- && echo 'nameserver 8.8.8.8' > /etc/resolv.conf \
  && apk update \
  && apk add alpine-base udev-init-scripts udev-init-scripts-openrc eudev \
       xorg-server xf86-input-libinput lightdm i3wm font-dejavu xrandr xev bash \
-      mesa-dri-gallium \
+      mesa-dri-gallium mesa-gbm mesa-gl libdrm \
       vim nano xterm thunar pcmanfm feh polybar
 
 RUN rc-update add bootmisc boot \
