@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="author" content="Eneko Duvós">
+        <meta name="description" content="This is my HTML5 project!">
+        <title>Contact Eneko's Bakery</title>
+        <link rel="icon" href="bakery.png" type="image/x-icon">
+        <link rel="stylesheet" href="main.css" type="text/css">
+        <style>
+         html {
+        font-size: 22px
+         }
+
+        body {
+         background-color: #333;
+         color: whitesmoke
+         }
+
+        a {
+           color: aliceblue;
+        }
+
+        a:visited {
+            color: rgb(219, 238, 255);
+        }
+
+        a:hover, a:active {
+        color: #c0c0c0;
+        }
+
+
+        table, tr, th, td, caption {
+        border: 1px solid #eee;
+        font-family: 'Courier New', Courier, monospace;
+        border-collapse: collapse;
+        padding: 0.5rem;
+        }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Contact Our Bakery</h1>
+
+            <nav>
+                <ul>
+                    <li>
+                        <a href="bakery.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="bakeryhours.html">Hours</a>
+                    </li>
+                </ul>
+            </nav>
+            <img src="img/pastery.jpg" alt="Bread" width="490" height="260">
+            <figcaption>
+                Sweet Pasery!
+            </figcaption>
+        </header>
+        <form>
+        <h2>Our Contact Form</h2>
+        <fieldset>
+            <legend>Send Us A Message</legend>
+        <p>
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" placeholder="Your name" autocomplete="on" required>
+        </p>
+        <p>
+        <label for="email">Email:</label>
+        <input type="text" name="email" id="email" placeholder="Your email" autocomplete="on" required >
+        </p>
+         </fieldset>
+         <fieldset>
+            <label for="message">Your Message:</label>
+            <br>
+            <textarea name="message" id="message" cols="30" rows="4" placeholder="Type your message"></textarea>
+           </fieldset>
+            <br>
+            <button type="submit" formaction="https://httpbin.org/post" formmethod="post">Submit</button>
+        </form>
+        <hr>
+        &lt;&lt;&lt;&copy;<a href="about.html">Eneko's Bakery</a>&gt;&gt;&gt;
+        <br>
+    </body>
+</html>

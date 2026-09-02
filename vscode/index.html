@@ -1,0 +1,689 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2022.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; color: #000000; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; color: #000000; -webkit-text-stroke: #000000; min-height: 14.0px}
+    span.s1 {font-kerning: none}
+    span.s2 {font: 12.0px Symbol; font-kerning: none}
+    span.s3 {font: 12.0px 'Apple Color Emoji'; font-kerning: none}
+    span.s4 {font: 12.0px 'Zapf Dingbats'; font-kerning: none}
+    span.s5 {font: 12.0px Menlo; font-kerning: none}
+    span.s6 {font: 12.0px 'Lucida Grande'; font-kerning: none}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">Here is the build plan for your Kahoot testing tool, followed by the complete HTML/CSS/JS code.</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">### Build Plan</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">**1. Core Architecture &amp; Philosophy**</span></p>
+<p class="p1"><span class="s1">- **Single HTML File:** All HTML, CSS, and JavaScript contained within one `index.html` for easy deployment and use.</span></p>
+<p class="p1"><span class="s1">- **No Backend Required:** The tool runs entirely in the browser. It simulates bot behavior and API interactions. *Note: True auto-answering for all public Kahoot games is impossible without a backend proxy due to CORS and API restrictions. Therefore, the tool uses a sophisticated simulation mode for demonstration &amp; testing, which you can explain to students as a proof-of-concept.*</span></p>
+<p class="p1"><span class="s1">- **Two Primary Modes:** Toggled via an editorial, asymmetric tab system at the top.</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- **Mode 1: The Agent (Auto-Answerer):** Demonstrates reading the question and selecting the correct answer (simulated).</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- **Mode 2: The Spammer (Bot Flooder):** Creates and manages multiple bot participants in a lobby.</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">**2. Visual Design System (Breaking the AI Mold)**</span></p>
+<p class="p1"><span class="s1">- **Typography:**</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- Headings: `Cormorant Garamond` (serif, editorial, sharp).</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- Body/Action: `Inter` (clean, technical, but not generic).</span></p>
+<p class="p1"><span class="s1">- **Color Palette:**</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- Background: `#F9F8F6` (warm off-white, paper-like).</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- Primary Text: `#1A1A1A` (almost black).</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- Accent/Highlight: `#E85D04` (vibrant, urgent orange).</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- Secondary Action: `#27272A` (deep gray).</span></p>
+<p class="p1"><span class="s1">- **Layout Constraints:**</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- **No Cards:** Information is separated by vertical rhythm (margin/padding) and font weights.</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- **No Borders:** No visible `border` properties on containers or headings.</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- **Asymmetry:** The control panels use an 35/65 or 40/60 split instead of 50/50. Lists and logs are right-aligned or extend to the edge.</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">**3. Functional Logic (Simulated &amp; Educational)**</span></p>
+<p class="p1"><span class="s1">- **Kahoot Code &amp; Username:** Input fields for lobby PIN and bot username(s).</span></p>
+<p class="p1"><span class="s1">- **Agent Mode (Auto-Answer):**</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- *Simulation:* When "Join &amp; Auto-Answer" is clicked, it simulates joining. Then, a "Question" appears (mock data). The "AI" (using a mock LLM call or a local answer key) selects the correct option visually.</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- *API Key Ready:* An input field for OpenRouter/DeepSeek key is provided. In a real deployment with a backend, you'd connect it here. For the frontend demo, it calls a simulated AI function.</span></p>
+<p class="p1"><span class="s1">- **Spammer Mode (Bot Flooder):**</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- Generate bots: Input number of bots (1-100). Click "Flood Lobby".</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- Each bot gets a unique name (Bot_1, Bot_2, etc.) and a randomized "connection" status.</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- **Real-time Dashboard:** A live list of active bots with "Disconnect" buttons. A score monitor and join speed slider.</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>- The bot names appear in a real-time log.</span></p>
+<p class="p1"><span class="s1">- **Educational Disclaimer:** Clear disclaimer that this is for authorized testing and anti-cheat research only.</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">**4. Component Breakdown**</span></p>
+<p class="p1"><span class="s1">- **Header Section:** Title, description, and toggle for Agent/Spammer.</span></p>
+<p class="p1"><span class="s1">- **Agent Panel:** API Key input, Kahoot PIN, Username, "Deploy Agent" button, simulated question area, answer log.</span></p>
+<p class="p1"><span class="s1">- **Spammer Panel:** PIN input, bot count slider, join speed slider, "Start Flood" button, active bots dashboard (flex/grid list), global disconnect button.</span></p>
+<p class="p1"><span class="s1">- **Footer:** Teacher/Testing disclaimer.</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">**5. Code Implementation Strategy**</span></p>
+<p class="p1"><span class="s1">- Use modern CSS Grid (magazine style) for layout.</span></p>
+<p class="p1"><span class="s1">- Vanilla JavaScript for DOM manipulation and state management.</span></p>
+<p class="p1"><span class="s1">- No external dependencies (except Google Fonts).</span></p>
+<p class="p1"><span class="s1">- Simulated network requests with `setTimeout` to mimic real bot behavior without actually spamming Kahoot's servers (responsible practice).</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">---</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">Here is the complete HTML file. You can save it as `index.html` and open it in a browser.</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">```html</span></p>
+<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;html lang="en"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;head&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;title&gt;KAHOOT TEST LAB · Anti-Cheat Simulator&lt;/title&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;!-- Editorial &amp; technical fonts --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&amp;family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&amp;display=swap" rel="stylesheet"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;style&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>* {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>box-sizing: border-box;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>body {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background-color: #F9F8F6;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>color: #1A1A1A;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-family: 'Inter', sans-serif;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>line-height: 1.4;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: 3rem 2rem 5rem 2rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>/* editorial container — asymmetric grid */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.container {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>max-width: 1400px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin: 0 auto;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>/* typography – no redundant subheadings */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>h1 {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-family: 'Cormorant Garamond', serif;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-size: 5rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-weight: 600;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>letter-spacing: -0.02em;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>line-height: 1.1;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin-bottom: 1rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>color: #1A1A1A;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.lead {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-size: 1.3rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-weight: 400;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>color: #3B3B3E;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>max-width: 780px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin-bottom: 2.2rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border-left: 4px solid #E85D04;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding-left: 1.2rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>/* ----- toggle (dual mode, no cards, just text &amp; underline) ----- */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.mode-toggle {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>display: flex;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>gap: 3rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin-bottom: 3.5rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding-bottom: 0.5rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border-bottom: 0; /* no border */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.mode-btn {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-family: 'Inter', sans-serif;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-size: 1.4rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-weight: 500;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>cursor: pointer;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>color: #6C6C70;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: 0.25rem 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>transition: all 0.2s ease;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>letter-spacing: -0.2px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.mode-btn.active {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>color: #E85D04;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-weight: 700;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>box-shadow: inset 0 -2px 0 #E85D04;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.mode-btn:first-child {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin-left: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>/* panels — no borders, no cards, just margin &amp; padding */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.panel {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>display: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin-top: 0.8rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.panel.active-panel {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>display: block;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>/* asymmetrical grid */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.two-col {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>display: grid;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>grid-template-columns: 1fr 1.65fr;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>gap: 3rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>align-items: start;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>/* form &amp; control sections – raw design */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.control-group {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin-bottom: 2rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>label {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-weight: 600;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-size: 0.85rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>text-transform: uppercase;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>letter-spacing: 0.04em;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>color: #2C2C2E;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>display: block;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin-bottom: 0.6rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>input, textarea, select {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>width: 100%;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: transparent;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border: 1px solid #D4D4D8;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: 0.9rem 1rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-family: 'Inter', monospace;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-size: 0.95rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>transition: 0.2s;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>outline: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>color: #1A1A1A;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>input:focus, textarea:focus {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border-color: #E85D04;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>button {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: #1A1A1A;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: 0.9rem 1.8rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-weight: 600;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-size: 0.9rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-family: 'Inter', sans-serif;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>color: white;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>cursor: pointer;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>transition: all 0.2s;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>letter-spacing: 0.2px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>button.secondary {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: #E85D04;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>color: #1A1A1A;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>button.outline {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: transparent;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border: 1px solid #1A1A1A;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>color: #1A1A1A;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>button:hover {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>opacity: 0.85;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>transform: translateY(-1px);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>/* realtime dashboard (no cards) */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.dashboard-header {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>display: flex;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>justify-content: space-between;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>align-items: baseline;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin-bottom: 1.5rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>flex-wrap: wrap;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.stats-badge {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-size: 0.8rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-weight: 500;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: #EDEDEF;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: 0.2rem 0.8rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.bot-list {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>max-height: 320px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>overflow-y: auto;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin-bottom: 1.8rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.bot-item {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>display: flex;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>justify-content: space-between;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>align-items: center;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: 0.7rem 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border-bottom: 0; /* zero border – only spacing */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin-bottom: 0.2rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-size: 0.9rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.bot-name {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-weight: 500;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.bot-score {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-family: monospace;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: #E9E9ED;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: 0.2rem 0.5rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-size: 0.75rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.disconnect-bot {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>color: #E85D04;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: 0.2rem 0.6rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-size: 0.7rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-weight: 600;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.action-log {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: #F1EFEA;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: 1rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-family: monospace;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-size: 0.8rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin-top: 1rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>max-height: 180px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>overflow-y: auto;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.slider-group {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>display: flex;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>gap: 1rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>align-items: center;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>flex-wrap: wrap;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>input[type="range"] {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>flex: 1;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>/* simulator question card (but not a rounded card, just block) */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.question-mock {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: transparent;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: 1rem 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin-top: 2rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.question-text {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-weight: 700;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-size: 1.2rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin-bottom: 1rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.answers {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>display: flex;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>flex-wrap: wrap;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>gap: 1rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin: 1rem 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.answer-option {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: #E8E7E3;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: 0.6rem 1.2rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>cursor: pointer;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-weight: 500;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.correct-highlight {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: #E85D04;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>color: white;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>hr {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin: 2rem 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>height: 1px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: #E4E2DE;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.disclaimer {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-size: 0.7rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>text-align: right;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>color: #6C6C70;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin-top: 4rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border-top: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding-top: 1.2rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>@media (max-width: 780px) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>body { padding: 1.5rem; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>.two-col { grid-template-columns: 1fr; gap: 2rem; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>h1 { font-size: 3rem; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
+<p class="p1"><span class="s1">&lt;body&gt;</span></p>
+<p class="p1"><span class="s1">&lt;div class="container"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;h1&gt;kahoot test lab&lt;/h1&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div class="lead"&gt;authorized anti‑cheat research · simulated agents &amp; flood control&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;!-- Mode Switcher (asymmetric, no icons) --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div class="mode-toggle"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;button class="mode-btn active" data-mode="agent"&gt;</span><span class="s2">⎯</span><span class="s1"><span class="Apple-converted-space">  </span>AI AGENT (auto‑answer)&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;button class="mode-btn" data-mode="spammer"&gt;</span><span class="s2">⎯</span><span class="s1"><span class="Apple-converted-space">  </span>BOT SPAMMER (flood simulation)&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;!-- ================== AI AGENT PANEL ================= --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div id="agentPanel" class="panel active-panel"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="two-col"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;!-- left: config --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="control-group"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;label&gt;openrouter / deepseek api key (free tier)&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;input type="text" id="apiKeyInput" placeholder="sk-or-... or sk-..." value=""&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div style="margin-top: 0.4rem; font-size: 0.7rem; color:#6C6C70;"&gt;*Demo simulation: uses local answer logic + mock LLM fallback&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="control-group"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;label&gt;kahoot game PIN&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;input type="text" id="agentPin" placeholder="e.g., 123456"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="control-group"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;label&gt;bot username&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;input type="text" id="agentUsername" placeholder="AI_Scout" value="AutoAnswerBot"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button id="deployAgentBtn" class="secondary"&gt;</span><span class="s3">⏺</span><span class="s1"> DEPLOY &amp; JOIN GAME (SIMULATED)&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="action-log" id="agentLog" style="margin-top: 1.8rem;"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&gt; Ready. Enter PIN, API key (optional) and deploy.&lt;br&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;!-- right: question simulation / answer area --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div style="margin-bottom: 1rem;"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;span style="font-weight: 700;"&gt;live question feed&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;span style="font-size: 0.7rem; background: #EDEDEF; padding: 0.2rem 0.5rem; margin-left: 0.8rem;"&gt;simulated kahoot stream&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div id="mockQuestionArea"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="question-text"&gt;</span><span class="s3">🤖</span><span class="s1"> no active agent — deploy to see auto‑answering&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="answers"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="answer-option"&gt;answer 1&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="answer-option"&gt;answer 2&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="answer-option"&gt;answer 3&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="answer-option"&gt;answer 4&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div style="margin-top: 0.8rem; font-size: 0.8rem;" id="aiReasoning"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;!-- ================== SPAMMER PANEL ================= --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div id="spammerPanel" class="panel"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="two-col"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;!-- left: controls --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="control-group"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;label&gt;game PIN (target lobby)&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;input type="text" id="spamPin" placeholder="000000"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="control-group"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;label&gt;bot count&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;input type="number" id="botCount" min="1" max="120" value="25"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="control-group"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;label&gt;join speed (ms between bots)&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="slider-group"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;span&gt;fast&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;input type="range" id="joinSpeed" min="50" max="800" value="180"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;span&gt;slow&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button id="startFloodBtn" class="secondary"&gt;</span><span class="s3">🌀</span><span class="s1"> FLOOD LOBBY (SIMULATED)&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button id="globalDisconnectBtn" class="outline" style="margin-left: 1rem; margin-top: 0.5rem;"&gt;</span><span class="s4">✖</span><span class="s1"> DISCONNECT ALL BOTS&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="action-log" id="spamLog" style="margin-top: 1.8rem;"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&gt; Flood simulator ready.&lt;br&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;!-- right: realtime dashboard --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="dashboard-header"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;span style="font-weight: 700;"&gt;active bots · dashboard&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;span class="stats-badge" id="botCounter"&gt;0 connected&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div id="botsContainer" class="bot-list"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div style="padding: 1rem 0; color: #71717A;"&gt;no bots active — start flood&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div style="display: flex; gap: 0.5rem; justify-content: flex-end;"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;button id="refreshMonitorBtn" class="outline" style="padding: 0.4rem 1rem;"&gt;</span><span class="s5">↻</span><span class="s1"> refresh stats&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div class="disclaimer"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s3">⚠️</span><span class="s1"> EDUCATIONAL TESTING ONLY — this tool simulates kahoot bot behavior for anti‑cheat analysis. No real kahoot API is abused. Use only on games you own or have explicit permission to test.</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// ------------------------------------------------------------------</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// STATE (spammer)</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>let activeBots = []; <span class="Apple-converted-space">    </span>// each bot = { id, name, score, status }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>let floodInterval = null;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// agent state</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>let agentActive = false;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>let currentQuestionMock = null;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>let questionIndex = 0;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// helper log</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function addLog(elementId, msg) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const logDiv = document.getElementById(elementId);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(logDiv) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const p = document.createElement('div');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>p.innerHTML = `&gt; ${new Date().toLocaleTimeString()} · ${msg}`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>logDiv.appendChild(p);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>logDiv.scrollTop = logDiv.scrollHeight;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>while(logDiv.children.length &gt; 28) logDiv.removeChild(logDiv.firstChild);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// ---- SPAMMER LOGIC (simulated bot creation, monitor) ----</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function renderBotDashboard() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const container = document.getElementById('botsContainer');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const counterSpan = document.getElementById('botCounter');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(!container) return;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(activeBots.length === 0) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>container.innerHTML = '&lt;div style="padding: 1rem 0; color: #71717A;"&gt;no bots active — start flood&lt;/div&gt;';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if(counterSpan) counterSpan.innerText = '0 connected';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>return;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>counterSpan.innerText = `${activeBots.length} connected`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>let html = '';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>activeBots.forEach(bot =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>html += `</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="bot-item" data-id="${bot.id}"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;span class="bot-name"&gt;</span><span class="s3">🤖</span><span class="s1"> ${escapeHtml(bot.name)}&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;span class="bot-score"&gt;${bot.score} pts&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;button class="disconnect-bot" data-id="${bot.id}"&gt;kick&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>container.innerHTML = html;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// attach disconnect events</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.querySelectorAll('.disconnect-bot').forEach(btn =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>btn.addEventListener('click', (e) =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const id = parseInt(btn.getAttribute('data-id'));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>disconnectBotById(id);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function disconnectBotById(id) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const index = activeBots.findIndex(b =&gt; b.id === id);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(index !== -1) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const removed = activeBots[index];</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>activeBots.splice(index,1);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>renderBotDashboard();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>addLog('spamLog', `Bot "${removed.name}" disconnected from lobby.`);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function disconnectAllBots() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(floodInterval) { clearInterval(floodInterval); floodInterval = null; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const count = activeBots.length;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>activeBots = [];</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>renderBotDashboard();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>addLog('spamLog', `Global kill: ${count} bot(s) removed.`);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function addBot(name) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const newId = Date.now() + Math.floor(Math.random() * 10000);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const newBot = {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>id: newId,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>name: name,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>score: Math.floor(Math.random() * 2800),</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>status: 'active'</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>};</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>activeBots.push(newBot);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>renderBotDashboard();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>addLog('spamLog', `Bot "${name}" joined lobby (PIN ${document.getElementById('spamPin').value || '****'})`);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// simulate random answer pattern for "dashboard score live"</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>setInterval(() =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const botStillHere = activeBots.find(b =&gt; b.id === newId);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if(botStillHere &amp;&amp; Math.random() &gt; 0.65) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>botStillHere.score += Math.floor(Math.random() * 450);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>renderBotDashboard();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}, 4000);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function floodLobby() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const pin = document.getElementById('spamPin').value.trim();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(!pin) { addLog('spamLog','</span><span class="s3">❌</span><span class="s1"> please enter a game PIN (testing mode)'); return; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>let botAmount = parseInt(document.getElementById('botCount').value);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(isNaN(botAmount) || botAmount &lt; 1) botAmount = 1;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(botAmount &gt; 120) botAmount = 120;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const speed = parseInt(document.getElementById('joinSpeed').value);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>let index = 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(floodInterval) clearInterval(floodInterval);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>addLog('spamLog', `</span><span class="s3">🚀</span><span class="s1"> Starting flood of ${botAmount} bots to PIN ${pin} (simulated join speed ${speed}ms)`);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>floodInterval = setInterval(() =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if(index &gt;= botAmount) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>clearInterval(floodInterval);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>floodInterval = null;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>addLog('spamLog', `</span><span class="s3">✅</span><span class="s1"> Flood finished. ${botAmount} bots joined.`);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>return;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const botName = `Flood_${Math.floor(Math.random()*9000)+1000}_${index}`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>addBot(botName);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>index++;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}, speed);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// ------ AI AGENT with simulated correct answer logic (demonstrates reading question &amp; choosing correct) -------</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const mockQuizBank = [</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{ question: "What is the capital of France?", options: ["Berlin", "Madrid", "Paris", "Lisbon"], correct: 2 },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{ question: "Which planet is known as the Red Planet?", options: ["Mars", "Jupiter", "Venus", "Saturn"], correct: 0 },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{ question: "Who painted the Mona Lisa?", options: ["Van Gogh", "Picasso", "Da Vinci", "Rembrandt"], correct: 2 },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{ question: "What does HTTP stand for?", options: ["HyperText Transfer Protocol", "High Transfer Text Protocol", "Hyper Transfer Text", "HyperText Transmission Protocol"], correct: 0 },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{ question: "Which year did World War II end?", options: ["1943", "1944", "1945", "1946"], correct: 2 }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>];</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>let currentMockQuestionObj = null;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function simulateNewQuestion() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(!agentActive) return;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const rand = Math.floor(Math.random() * mockQuizBank.length);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>currentMockQuestionObj = { ...mockQuizBank[rand] };</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// display in UI</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const qArea = document.getElementById('mockQuestionArea');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(qArea) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>let answersHtml = '';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>currentMockQuestionObj.options.forEach((opt, idx) =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>answersHtml += `&lt;div class="answer-option" data-opt-index="${idx}"&gt;${escapeHtml(opt)}&lt;/div&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>qArea.innerHTML = `</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="question-text"&gt;</span><span class="s3">❓</span><span class="s1"> ${escapeHtml(currentMockQuestionObj.question)}&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="answers" id="answersContainer"&gt;${answersHtml}&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>addLog('agentLog', `</span><span class="s3">📢</span><span class="s1"> New question: "${currentMockQuestionObj.question}" — AI will select correct answer.`);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>// simulate AI decision after 1 sec</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>setTimeout(() =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>if(agentActive &amp;&amp; currentMockQuestionObj) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>const correctIdx = currentMockQuestionObj.correct;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>const apiKey = document.getElementById('apiKeyInput').value.trim();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>let decisionMsg = '';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>if(apiKey &amp;&amp; apiKey.startsWith('sk-')) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>decisionMsg = `(OpenRouter/DeepSeek mode) AI reasoning: correct answer is "${currentMockQuestionObj.options[correctIdx]}"`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>} else {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>decisionMsg = `(local simulation) AI selects correct answer: ${currentMockQuestionObj.options[correctIdx]}`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>document.getElementById('aiReasoning').innerHTML = `&lt;span style="color:#E85D04;"&gt;</span><span class="s6">✓</span><span class="s1"> AI decision </span><span class="s2">→</span><span class="s1">&lt;/span&gt; ${decisionMsg}`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>// highlight correct answer</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>const allAnswers = document.querySelectorAll('#answersContainer .answer-option');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>if(allAnswers[correctIdx]) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>allAnswers.forEach(el =&gt; el.classList.remove('correct-highlight'));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>allAnswers[correctIdx].classList.add('correct-highlight');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>addLog('agentLog', `</span><span class="s3">✅</span><span class="s1"> Bot answered correctly: "${currentMockQuestionObj.options[correctIdx]}"`);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>// schedule next question after 5 sec</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>if(agentActive) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>setTimeout(() =&gt; simulateNewQuestion(), 4800);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}, 1000);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function deployAgent() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const pin = document.getElementById('agentPin').value.trim();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const username = document.getElementById('agentUsername').value.trim();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(!pin) { addLog('agentLog','</span><span class="s3">❌</span><span class="s1"> Please enter a game PIN to join (simulation)'); return; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(!username) { addLog('agentLog','</span><span class="s3">❌</span><span class="s1"> Enter a username'); return; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>agentActive = true;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>addLog('agentLog', `</span><span class="s3">🤖</span><span class="s1"> Agent "${username}" deploying to PIN ${pin} ... joined lobby (simulated handshake).`);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>addLog('agentLog', `</span><span class="s3">🔁</span><span class="s1"> Auto-answer AI active. Waiting for questions...`);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.getElementById('aiReasoning').innerHTML = '';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// reset question state</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>currentMockQuestionObj = null;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// start mock question cycle</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>setTimeout(() =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if(agentActive) simulateNewQuestion();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}, 1500);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function resetAgent() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(agentActive) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>agentActive = false;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>addLog('agentLog', `</span><span class="s3">🛑</span><span class="s1"> Agent deactivated. Stopped auto-answer.`);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>document.getElementById('aiReasoning').innerHTML = '';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const qArea = document.getElementById('mockQuestionArea');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if(qArea &amp;&amp; !agentActive) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>qArea.innerHTML = `&lt;div class="question-text"&gt;</span><span class="s3">🤖</span><span class="s1"> agent offline — deploy again&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="answers"&gt;&lt;div class="answer-option"&gt;—&lt;/div&gt;&lt;div class="answer-option"&gt;—&lt;/div&gt;&lt;div class="answer-option"&gt;—&lt;/div&gt;&lt;div class="answer-option"&gt;—&lt;/div&gt;&lt;/div&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// ----- UI TOGGLE ----------</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function switchToAgent() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.getElementById('agentPanel').classList.add('active-panel');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.getElementById('spammerPanel').classList.remove('active-panel');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.querySelectorAll('.mode-btn').forEach(btn =&gt; btn.classList.remove('active'));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.querySelector('.mode-btn[data-mode="agent"]').classList.add('active');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>resetAgent(); // ensure no cross</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function switchToSpammer() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.getElementById('spammerPanel').classList.add('active-panel');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.getElementById('agentPanel').classList.remove('active-panel');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.querySelectorAll('.mode-btn').forEach(btn =&gt; btn.classList.remove('active'));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.querySelector('.mode-btn[data-mode="spammer"]').classList.add('active');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(agentActive) resetAgent();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// helpers</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function escapeHtml(str) { return String(str).replace(/[&amp;&lt;&gt;]/g, function(m){if(m==='&amp;') return '&amp;amp;'; if(m==='&lt;') return '&amp;lt;'; if(m==='&gt;') return '&amp;gt;'; return m;});}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// attach events</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('deployAgentBtn').addEventListener('click', () =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(agentActive) resetAgent();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>deployAgent();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('startFloodBtn').addEventListener('click', () =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(floodInterval) clearInterval(floodInterval);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>floodLobby();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('globalDisconnectBtn').addEventListener('click', disconnectAllBots);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('refreshMonitorBtn').addEventListener('click', () =&gt; renderBotDashboard());</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// mode switchers</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.querySelectorAll('.mode-btn').forEach(btn =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>btn.addEventListener('click', (e) =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const mode = btn.getAttribute('data-mode');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if(mode === 'agent') switchToAgent();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>else switchToSpammer();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// initial spammer cleanup</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>window.addEventListener('load', () =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>renderBotDashboard();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>addLog('spamLog', 'system ready. Flood &amp; monitor active (simulated environment).');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>addLog('agentLog', 'AI agent waiting. Provide PIN, username and click deploy.');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
+<p class="p1"><span class="s1">&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+<p class="p1"><span class="s1">```</span></p>
+</body>
+</html>

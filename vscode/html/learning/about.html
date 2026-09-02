@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="author" content="Eneko Duvós">
+        <meta name="description" content="This page contains all the thins that I know about HTML.">
+        <title>About page</title>
+        <link rel="icon" href="icon.png" type="image/x-icon">
+        <link rel="stylesheet" href="bakery.css" type="text/css">
+    </head>
+    <body>
+        <h1>Hi, I'm Eneko Duvós</h1>
+
+        <hr>
+
+        <h2>About Myself</h2>
+        <table>
+            <caption>I like to...</caption>
+            <thead>
+            <tr>
+                <th scope="col">Activity</th>
+                <th scope="col">Percentage</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    Draw
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;10%</td>
+            </tr>
+            <tr>
+                <td>
+                    Program
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;25%</td>
+            </tr>
+            <tr>
+                <td>
+                    Play Basketball
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;35%</td>
+            </tr>
+            <tr>
+                 <td>Music</td>
+                <td rowspan="2">Other 30%</td>
+            </tr>
+            <tr>
+                <td>TV</td>
+            </tr>
+             </tbody>    
+        </table>
+
+        <hr>
+
+        <h2>Info</h2>
+        <p>I'd really like to hear from you!</p>
+
+                <form action="https://httpbin.org/get" method="get">
+                    <fieldset>
+                        <legend>Personal Info</legend>
+                    <p>
+                    <label for="firstName">First Name:</label>
+                    <input type="text" name="firstName" id="firstName" placeholder="Type..." autocomplete="on" required>
+                    </p>
+                    <p>
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" name="lastName" id="lastName" placeholder="Type..." autocomplete="on" required >
+                    </p>
+                   
+                    <p>
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" id="password" placeholder="password" required >
+                    </p>
+                     <p>
+                    <label for="phone">Phone:</label>
+                    <input type="tel" name="phone" id="phone" placeholder="123 456 789" pattern="[0-9]{3} [0-9]{3} [0-9]{3}" required >
+                    </p>
+                     <p>
+                    <label for="year">Favorite Year:</label>
+                    <input type="number" name="year" id="year" min="1950" max="2025" step="1" value="2000">
+                    </p>
+                    <p>
+                        <label for="food">Favourite Food:</label>
+                        <select name="food" id="food">
+                            <option value="sea food">Sea Food</option>
+                            <option value="junk food">Junk Food</option>
+                            <option value="meat">Meat</option>
+                            <option value="bakery">Bakery</option>
+                            <option value="gourmet">Gourmet</option>
+                            <option value="other">Other...</option>
+                        </select>
+                    </p>
+                </fieldset>
+                <br>
+                <fieldset>
+                    <legend>What is your favorite sport?</legend>
+                    <p>
+                        <input type="radio" name="sports" id="basketball" value="basketball">
+                        <label for="basketball">Basketball</label>
+                    </p>
+                    <p>
+                        <input type="radio" name="sports" id="soccer" value="soccer">
+                        <label for="soccer">Soccer</label>
+                    </p>
+                    <p>
+                        <input type="radio" name="sports" id="tennis" value="tennis">
+                        <label for="tennis">Tennis</label>
+                    </p>
+                    <p>
+                        <input type="radio" name="sports" id="other" value="other">
+                        <label for="other">Other...</label>
+                    </p>
+                </fieldset>
+                <br>
+                <h3>Contact me</h3>
+                <fieldset>
+                 <label for="message">Your Message:</label>
+                 <br>
+                 <textarea name="message" id="message" cols="30" rows="3" placeholder="Type your message"></textarea>
+                </fieldset>
+                 <br>
+                 <button type="submit" formaction="https://httpbin.org/post" formmethod="post">Submit</button>
+                </form>
+                <br>
+            <p>
+                Open <a href="https://google.com/" target="_blank">Google</a> in a new tab.
+            </p>
+
+        <hr>
+
+        &lt;&lt;&lt; &copy;Eneko Duvós &gt;&gt;&gt;
+        <p>
+            <a href="/">Back to Home</a>
+        </p>
+
+    </body>
+</html>
