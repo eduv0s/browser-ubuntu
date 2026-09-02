@@ -1,32 +1,26 @@
 # Browser Ubuntu
 
-Browser Ubuntu ejecuta Linux real dentro del navegador mediante v86 y WebAssembly. Netlify solo sirve archivos estáticos.
+Browser Ubuntu está migrando a un prototipo basado en CheerpX: ejecuta binarios
+x86 Linux dentro del navegador mediante WebAssembly. Netlify solo sirve la
+aplicación estática.
 
-## Estado de la imagen
+## Estado actual
 
-La imagen activa es **Tiny Core Linux 11 x86**, ISO arrancable de 19.0 MiB. Es la única imagen comprobada que llega a ejecutarse con v86 en este entorno. Xubuntu 18.04.5 i386 (1,45 GiB) y Lubuntu 18.04.5 i386 (1,11 GiB) fueron descargadas y verificadas; ambas se probaron en Chromium real, pero no alcanzaron un escritorio usable: Xubuntu se detuvo en errores BIOS/ACPI y Lubuntu terminó en `soft lockup` tras su menú gráfico. Por eso no se deja una ISO Ubuntu grande que no funcione.
+La aplicación usa CheerpX 1.3.9 y la imagen Alpine gráfica oficial
+`alpine_20251007.ext2`, servida por el backend oficial de discos de CheerpX.
+El overlay de escritura usa `IDBDevice`, por lo que los cambios están
+pensados para persistir localmente. El escritorio XFCE y Firefox todavía no
+están integrados ni deben anunciarse como disponibles.
 
-Tiny Core Linux MD5 oficial verificado: `62404bb6b29f03cffcaf4e098855873c`.
+La prueba real ejecutada con Chromium escribe `persistence-proof` en
+`/home/user/browser-ubuntu-test.txt`, espera a que termine la operación de
+disco, recarga la página y ejecuta `cat` en una instancia nueva. El contenido
+se recupera correctamente. El prototipo corrige además los permisos iniciales
+del directorio `/home/user` antes de iniciar la shell del usuario.
 
-## Constructor experimental de Alpine XFCE
-
-La imagen Alpine XFCE todavía no está integrada: este Mac no tiene Docker, un
-runtime Linux ni un `qemu-img` ejecutable. Se ha dejado el constructor
-reproducible en `scripts/build-alpine-xfce-image.sh`. Usa el script oficial
-`alpine-make-vm-image` dentro de un contenedor Linux únicamente durante el
-desarrollo, crea un HDD BIOS raw de 512 MiB y prepara Alpine x86 con XFCE,
-LightDM, Thunar, terminal y herramientas básicas. Docker/QEMU no forman parte
-de la aplicación publicada.
-
-Cuando exista Docker, se ejecuta con:
-
-```bash
-scripts/build-alpine-xfce-image.sh
-```
-
-El script escribe `public/assets/images/alpine-xfce-v86.img` y su SHA256. No se
-debe sustituir la imagen activa hasta probar el arranque gráfico real en
-Chromium.
+CheerpX requiere `SharedArrayBuffer` y aislamiento de origen. La configuración
+de Vite y Netlify aplica `Cross-Origin-Opener-Policy: same-origin` y
+`Cross-Origin-Embedder-Policy: require-corp`.
 
 ## Ejecutar
 
@@ -37,13 +31,15 @@ npm run dev
 
 Pulsa **Iniciar Ubuntu**. La etiqueta indica discretamente la imagen técnica real. No abras `index.html` con `file://`.
 
-## Fullscreen y ratón
-
-El botón llama a `machine.screen_go_fullscreen()`, que es la API de v86. El elemento `screen_container` ocupa `100vw/100vh` en fullscreen y el canvas conserva su proporción. Un clic en la pantalla activa `mouse_set_enabled(true)` y `lock_mouse()`; al apagar o salir se ejecuta `exitPointerLock()`.
-
 ## Persistencia y consentimiento
 
-Con **Aceptar**, el estado de v86 se guarda en IndexedDB con `save_state()` y se recupera con **Restaurar sesión**. La instancia siempre se crea con las mismas opciones, incluida una imagen HDD virtual de 64 MiB, para que el snapshot pueda restaurar los dispositivos. Con **Rechazar**, la VM funciona pero no se guardan estados. **Nueva sesión** pide confirmación y elimina el snapshot; la carga inicial nunca lo borra automáticamente. Solo se guarda la decisión de consentimiento en `localStorage`; no hay cookies de terceros, analytics ni trackers.
+Con **Aceptar**, CheerpX monta una imagen ext2 de solo lectura sobre un
+`OverlayDevice` respaldado por `IDBDevice`. Este es el mecanismo oficial para
+persistir bloques modificados en IndexedDB. Con **Rechazar**, la shell puede
+funcionar, pero no se debe conservar una sesión. **Nueva sesión** pide
+confirmación y borra el overlay local. Solo se guarda la decisión de
+consentimiento en `localStorage`; no hay cookies de terceros, analytics ni
+trackers.
 
 ## Build y Netlify
 
@@ -56,8 +52,38 @@ Netlify publica `dist/` mediante `netlify.toml`. No hay backend, networking, cue
 
 ## Assets y licencias
 
-- `public/assets/emulator/libv86.mjs` y `v86.wasm`: v86, BSD-2-Clause.
-- `public/assets/bios/`: SeaBIOS/vgabios del proyecto v86.
-- `public/assets/images/TinyCore-11.0.iso`: Tiny Core Linux x86, GPL-2.0-or-later.
+- CheerpX 1.2.8 se carga desde `https://cxrtnc.leaningtech.com`; su licencia
+  comunitaria permite proyectos personales/FOSS/evaluaciones, pero no permite
+  autoalojar o redistribuir el runtime sin licencia comercial.
+- La imagen Debian de referencia pertenece al flujo oficial de WebVM/CheerpX.
 
 El script `scripts/fetch-assets.sh` permite descargar de nuevo la configuración de assets.
+
+## Diagnóstico gráfico Alpine / Xorg
+
+La receta oficial de la imagen está en
+[leaningtech/alpine-image](https://github.com/leaningtech/alpine-image). Su
+`Dockerfile` instala Xorg, LightDM e i3, pero no declara `mesa-dri-gallium`.
+La imagen remota `alpine_20251007.ext2` tampoco contiene los módulos DRI en
+`/usr/lib/xorg/modules/dri/`. Por eso Xorg informa:
+
+```text
+failed to load driver: CheerpX KMS
+failed to load driver: kms_swrast
+failed to load swrast driver
+couldn't get display device
+```
+
+En Alpine 3.17, el paquete que aporta los controladores de software
+`swrast_dri.so` y `kms_swrast_dri.so` es `mesa-dri-gallium`, como confirma el
+[índice oficial de contenidos de Alpine](https://pkgs.alpinelinux.org/contents?arch=x86&branch=v3.17&name=mesa-dri-gallium&repo=main).
+No hay un paquete Alpine que proporcione un archivo llamado `CheerpX KMS_dri.so`;
+ese nombre aparece durante la selección del dispositivo KMS de CheerpX y no es
+un asset que pueda descargarse desde este proyecto.
+
+La receta mínima corregida para reconstruir la imagen oficial debe añadir
+`mesa-dri-gallium` al primer `apk add`, conservar `xorg-server` y generar de
+nuevo el ext2 mediante el pipeline de imagen de WebVM. No se ha incorporado
+automáticamente a `alpine_20251007.ext2`: la imagen se sirve remotamente y este
+entorno no dispone de Docker, QEMU ni herramientas ext2 para reconstruirla
+localmente de forma segura.

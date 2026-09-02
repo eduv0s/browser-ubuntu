@@ -1,0 +1,40 @@
+name: Build Alpine graphical image
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'image-build/**'
+      - '.github/workflows/build-alpine-graphics.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE: alpine-cheerpx-i3.ext2
+      RELEASE: alpine-cheerpx-i3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build i386 Alpine filesystem
+        run: docker build --platform linux/386 -t browser-ubuntu-alpine image-build
+      - name: Export container to ext2
+        run: |
+          set -eux
+          id=$(docker create browser-ubuntu-alpine)
+          trap 'docker rm -f "$id" >/dev/null 2>&1 || true; sudo umount /mnt/browser-ubuntu-alpine >/dev/null 2>&1 || true' EXIT
+          sudo mkdir -p /mnt/browser-ubuntu-alpine
+          sudo fallocate -l 750M "$IMAGE"
+          sudo mkfs.ext2 -r 0 "$IMAGE"
+          sudo mount -o loop -t ext2 "$IMAGE" /mnt/browser-ubuntu-alpine
+          sudo docker cp -a "$id":/. /mnt/browser-ubuntu-alpine/
+          sudo umount /mnt/browser-ubuntu-alpine
+          sha256sum "$IMAGE" | tee "$IMAGE.sha256"
+      - name: Publish stable release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$RELEASE" >/dev/null 2>&1 || gh release create "$RELEASE" --title "Alpine CheerpX i3" --notes "Generated Alpine 3.17 i386 image with Xorg, LightDM, i3 and Mesa DRI."
+          gh release upload "$RELEASE" "$IMAGE" "$IMAGE.sha256" --clobber
