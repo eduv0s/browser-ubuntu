@@ -5,7 +5,7 @@ RUN echo '@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/a
  && apk update \
  && apk add alpine-base udev-init-scripts udev-init-scripts-openrc eudev \
       xorg-server xf86-input-libinput lightdm i3wm font-dejavu xrandr xev bash \
-      mesa-dri-gallium mesa-gbm mesa-gl libdrm \
+      mesa-dri-gallium \
       vim nano xterm thunar pcmanfm feh polybar
 
 RUN rc-update add bootmisc boot \
