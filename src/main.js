@@ -2,7 +2,7 @@ import './style.css';
 
 const APP_VERSION = '0.5.0-webvm-graphics';
 const CHEERPX_VERSION = '1.3.9';
-const BASE_IMAGE = 'wss://disks.webvm.io/alpine_20251007.ext2';
+const BASE_IMAGE = 'https://github.com/eduv0s/browser-ubuntu/releases/download/alpine-cheerpx-i3/alpine-cheerpx-i3.ext2';
 const CONSENT_KEY = 'browser-ubuntu-consent';
 const IDB_DEVICE_NAME = 'browser-ubuntu-cheerpx-overlay-v1';
 
