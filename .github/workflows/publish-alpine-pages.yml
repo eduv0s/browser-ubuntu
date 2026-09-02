@@ -1,0 +1,44 @@
+name: Publish Alpine image to Pages
+
+on:
+  push:
+    paths:
+      - '.github/workflows/publish-alpine-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Download existing image
+        run: |
+          set -eux
+          mkdir -p /tmp/alpine-pages
+          curl --location --fail --retry 5 --retry-all-errors \
+            --output /tmp/alpine-pages/alpine-cheerpx-i3.ext2 \
+            https://github.com/eduv0s/browser-ubuntu/releases/download/alpine-cheerpx-i3/alpine-cheerpx-i3.ext2
+          test "$(stat -c '%s' /tmp/alpine-pages/alpine-cheerpx-i3.ext2)" -gt 700000000
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: /tmp/alpine-pages
+
+      - name: Deploy to Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
