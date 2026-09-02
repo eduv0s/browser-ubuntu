@@ -1,2 +1,12 @@
 import { describe, expect, it } from 'vitest';
-describe('Browser Ubuntu assets',()=>{it('uses the local Xubuntu image and v86 runtime',()=>{expect('/assets/emulator/v86.wasm').toMatch(/^\/assets\//);expect('/assets/images/xubuntu-18.04.5-desktop-i386.iso').toMatch(/^\/assets\//);});});
+import { readFileSync } from 'node:fs';
+
+describe('Browser Ubuntu CheerpX prototype', () => {
+  it('uses the official CheerpX runtime and persistent overlay design', () => {
+    const source = readFileSync('src/main.js', 'utf8');
+    expect(source).toContain('CheerpX.Linux.create');
+    expect(source).toContain('CheerpX.IDBDevice.create');
+    expect(source).toContain('CheerpX.OverlayDevice.create');
+    expect(source).toContain('crossOriginIsolated');
+  });
+});
