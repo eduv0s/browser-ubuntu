@@ -1,8 +1,8 @@
 import './style.css';
 
-const APP_VERSION = '0.5.0-webvm-graphics';
+const APP_VERSION = '0.6.0-webvm-graphics';
 const CHEERPX_VERSION = '1.3.9';
-const BASE_IMAGE = 'https://github.com/eduv0s/browser-ubuntu/releases/download/alpine-cheerpx-i3/alpine-cheerpx-i3.ext2';
+const BASE_IMAGE = 'https://disks.webvm.io/alpine_20251007.ext2';
 const CONSENT_KEY = 'browser-ubuntu-consent';
 const IDB_DEVICE_NAME = 'browser-ubuntu-cheerpx-overlay-v1';
 
@@ -29,7 +29,7 @@ function home() {
 }
 
 function launch() {
-  app.innerHTML = `<main class="vm"><header class="toolbar"><div class="brand"><span class="logo">⌁</span>Browser Ubuntu</div><span class="state" id="state">Iniciando Alpine gráfico…</span><div class="controls"><button id="fullscreen">Pantalla completa</button><button id="new">Nueva sesión</button><button id="shutdown">Apagar</button></div></header><section class="screen-wrap" id="screen-wrap"><canvas id="display" aria-label="Escritorio Linux"></canvas><pre id="console" class="console" hidden></pre></section><footer class="vm-footer">Alpine Linux · Xorg · i3 · escritorio gráfico real · CheerpX</footer></main>`;
+  app.innerHTML = `<main class="vm"><header class="toolbar"><div class="brand"><span class="logo">⌁</span>Browser Ubuntu</div><span class="state" id="state">Iniciando Alpine…</span><div class="controls"><button id="fullscreen">Pantalla completa</button><button id="new">Nueva sesión</button><button id="shutdown">Apagar</button></div></header><section class="screen-wrap" id="screen-wrap"><canvas id="display" aria-label="Escritorio Linux"></canvas><pre id="console" class="console" hidden></pre></section><footer class="vm-footer">Alpine Linux · Xorg · i3 · escritorio gráfico real · CheerpX</footer></main>`;
   const display = document.querySelector('#display');
   const consoleElement = document.querySelector('#console');
   const screenWrap = document.querySelector('#screen-wrap');
@@ -53,7 +53,6 @@ async function boot(display, consoleElement, screenWrap, state) {
     }
     idbDevice = await CheerpX.IDBDevice.create(IDB_DEVICE_NAME);
     overlay = await CheerpX.OverlayDevice.create(cloud, idbDevice);
-    // These mounts and the display setup mirror WebVM's public Alpine config.
     const webDevice = await CheerpX.WebDevice.create('');
     const dataDevice = await CheerpX.DataDevice.create();
     linux = await CheerpX.Linux.create({ mounts: [
@@ -79,13 +78,10 @@ async function boot(display, consoleElement, screenWrap, state) {
     let currentVt = 0;
     linux.setActivateConsole((vt) => {
       currentVt = vt;
-      // WebVM brings the KMS canvas to the front when Alpine switches to VT 7.
       screenWrap.dataset.virtualTerminal = String(vt);
       screenWrap.style.zIndex = vt === 7 ? '5' : '1';
       state.textContent = vt === 7 ? 'Linux listo · Alpine + Xorg + i3' : 'Iniciando Xorg y escritorio…';
     });
-    // Graphical WebVM uses a custom console, leaving the KMS canvas as the
-    // actual display surface instead of routing the VT through a text element.
     linux.setCustomConsole((data) => {
       const text = typeof data === 'string'
         ? data
@@ -94,10 +90,7 @@ async function boot(display, consoleElement, screenWrap, state) {
       if (consoleElement.textContent.length > 12000) consoleElement.textContent = consoleElement.textContent.slice(-12000);
     }, 80, 24);
     state.textContent = 'Iniciando Xorg y escritorio…';
-    // Alpine's /sbin/init and `openrc default` first run mount services that
-    // are unavailable in CheerpX (proc/tmpfs/dev are already virtual
-    // mounts). Start only the graphical services that this WebVM image
-    // needs, avoiding that incompatible sysinit path.
+    // Start only the graphical services that this WebVM image needs.
     while (true) await linux.run('/bin/sh', ['-c', 'mkdir -p /run /run/lock /run/dbus /run/lightdm; chown lightdm:lightdm /run/lightdm; /usr/bin/dbus-daemon --system --fork; exec /usr/bin/lightdm --debug'], { cwd: '/', uid: 0, gid: 0 });
   } catch (error) {
     state.textContent = 'No se pudo iniciar Linux';
