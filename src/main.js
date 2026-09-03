@@ -1,10 +1,17 @@
 import './style.css';
 
-const APP_VERSION = '0.6.0-webvm-graphics';
+const APP_VERSION = '0.8.0-webvm-graphics';
 const CHEERPX_VERSION = '1.3.9';
-const BASE_IMAGE = 'https://disks.webvm.io/alpine_20251007.ext2';
+// Official WebVM Alpine graphical image. We mirror the URL exposed on webvm.io and
+// serving from GitHub Pages so the browser can fetch it with CORS enabled.
+// If the Pages URL is unreachable, the runtime falls back to the WebVM gateway
+// (Cloudflare Worker over wss), which is the canonical WebVM setup.
+const BASE_IMAGE = 'https://eduv0s.github.io/browser-ubuntu/alpine-cheerpx-i3.ext2';
+const WSS_FALLBACK = 'wss://disks.webvm.io/alpine_20251007.ext2';
 const CONSENT_KEY = 'browser-ubuntu-consent';
 const IDB_DEVICE_NAME = 'browser-ubuntu-cheerpx-overlay-v1';
+const BOOT_COMMAND =
+  'mkdir -p /run/lock /run/dbus /run/lightdm; chown lightdm:lightdm /run/lightdm; /usr/bin/dbus-daemon --system --fork; exec /usr/bin/lightdm --debug';
 
 const app = document.querySelector('#app');
 let linux;
@@ -24,8 +31,17 @@ function home() {
   restore.onclick = () => launch();
   const banner = document.querySelector('#consent');
   if (!consent) banner.hidden = false;
-  document.querySelector('#accept').onclick = () => { consent = 'accepted'; localStorage.setItem(CONSENT_KEY, consent); banner.hidden = true; restore.hidden = false; };
-  document.querySelector('#reject').onclick = () => { consent = 'rejected'; localStorage.setItem(CONSENT_KEY, consent); banner.hidden = true; };
+  document.querySelector('#accept').onclick = () => {
+    consent = 'accepted';
+    localStorage.setItem(CONSENT_KEY, consent);
+    banner.hidden = true;
+    restore.hidden = false;
+  };
+  document.querySelector('#reject').onclick = () => {
+    consent = 'rejected';
+    localStorage.setItem(CONSENT_KEY, consent);
+    banner.hidden = true;
+  };
 }
 
 function launch() {
@@ -35,35 +51,100 @@ function launch() {
   const screenWrap = document.querySelector('#screen-wrap');
   const state = document.querySelector('#state');
   consoleElement.focus();
-  document.querySelector('#fullscreen').onclick = async () => { const target = document.querySelector('.vm'); if (!document.fullscreenElement) await target.requestFullscreen?.(); else await document.exitFullscreen?.(); };
+  document.querySelector('#fullscreen').onclick = async () => {
+    const target = document.querySelector('.vm');
+    if (!document.fullscreenElement) await target.requestFullscreen?.();
+    else await document.exitFullscreen?.();
+  };
   document.querySelector('#shutdown').onclick = () => home();
-  document.querySelector('#new').onclick = async () => { if (!confirm('¿Borrar el filesystem local y empezar de cero?')) return; await idbDevice?.reset(); home(); };
+  document.querySelector('#new').onclick = async () => {
+    if (!confirm('¿Borrar el filesystem local y empezar de cero?')) return;
+    await idbDevice?.reset();
+    home();
+  };
   boot(display, consoleElement, screenWrap, state);
 }
 
-async function boot(display, consoleElement, screenWrap, state) {
-  try {
-    if (!crossOriginIsolated) throw new Error('CheerpX necesita aislamiento de origen (COOP/COEP) y SharedArrayBuffer.');
-    const CheerpX = await import(/* @vite-ignore */ `https://cxrtnc.leaningtech.com/${CHEERPX_VERSION}/cx.esm.js`);
-    let cloud;
-    try {
-      cloud = await CheerpX.CloudDevice.create(BASE_IMAGE);
-    } catch (error) {
-      cloud = await CheerpX.CloudDevice.create(BASE_IMAGE.replace('wss:', 'https:'));
-    }
+function setState(state, message) {
+  state.textContent = message;
+}
+function logConsole(consoleElement, message) {
+  consoleElement.textContent += `${message}\n`;
+  if (consoleElement.textContent.length > 12000) {
+    consoleElement.textContent = consoleElement.textContent.slice(-12000);
+  }
+}
+
+// Translate the requested image URL into the device descriptor expected by
+// CheerpX.Linux.create(). Mirrors the WebVM implementation:
+//   - diskImageType "cloud"  + URL wss:// -> CheerpX.CloudDevice
+//   - diskImageType "bytes"  + URL https -> CheerpX.HttpBytesDevice
+// The wrapper around IDBDevice+OverlayDevice keeps the original image untouched
+// and persists writes into IndexedDB.
+function diskImageFor(url) {
+  if (url.startsWith('wss://') || url.startsWith('ws://')) {
+    return { diskImageType: 'cloud', diskImageUrl: url };
+  }
+  return { diskImageType: 'bytes', diskImageUrl: url };
+}
+
+async function createOverlayDevice(CheerpX, url) {
+  const config = diskImageFor(url);
+  if (config.diskImageType === 'cloud') {
+    const base = await CheerpX.CloudDevice.create(config.diskImageUrl);
     idbDevice = await CheerpX.IDBDevice.create(IDB_DEVICE_NAME);
-    overlay = await CheerpX.OverlayDevice.create(cloud, idbDevice);
+    return await CheerpX.OverlayDevice.create(base, idbDevice);
+  }
+  const base = await CheerpX.HttpBytesDevice.create(config.diskImageUrl);
+  idbDevice = await CheerpX.IDBDevice.create(IDB_DEVICE_NAME);
+  return await CheerpX.OverlayDevice.create(base, idbDevice);
+}
+
+async function boot(display, consoleElement, screenWrap, state) {
+  consoleElement.hidden = false;
+  try {
+    if (!crossOriginIsolated) {
+      throw new Error('CheerpX necesita aislamiento de origen (COOP/COEP) y SharedArrayBuffer.');
+    }
+    setState(state, 'Cargando CheerpX…');
+    const CheerpX = await import(/* @vite-ignore */ `https://cxrtnc.leaningtech.com/${CHEERPX_VERSION}/cx.esm.js`);
+
+    let baseUrl = BASE_IMAGE;
+    let overlayDevice;
+    try {
+      setState(state, `Descargando imagen: ${new URL(baseUrl).host}…`);
+      overlayDevice = await createOverlayDevice(CheerpX, baseUrl);
+    } catch (error) {
+      logConsole(consoleElement, `Fallo cargando ${baseUrl}: ${error.message}`);
+      if (WSS_FALLBACK) {
+        logConsole(consoleElement, `Probando fallback wss:// ${WSS_FALLBACK}…`);
+        baseUrl = WSS_FALLBACK;
+        overlayDevice = await createOverlayDevice(CheerpX, baseUrl);
+      } else {
+        throw error;
+      }
+    }
+    overlay = overlayDevice;
+
     const webDevice = await CheerpX.WebDevice.create('');
     const dataDevice = await CheerpX.DataDevice.create();
-    linux = await CheerpX.Linux.create({ mounts: [
-      { type: 'ext2', dev: overlay, path: '/' },
-      { type: 'dir', dev: webDevice, path: '/web' },
-      { type: 'dir', dev: dataDevice, path: '/data' },
-      { type: 'devs', path: '/dev' },
-      { type: 'devpts', path: '/dev/pts' },
-      { type: 'proc', path: '/proc' },
-      { type: 'sys', path: '/sys' },
-    ] });
+    const { diskImageType, diskImageUrl } = diskImageFor(baseUrl);
+
+    setState(state, 'Inicializando kernel Linux…');
+    linux = await CheerpX.Linux.create({
+      mounts: [
+        { type: 'ext2', dev: overlay, path: '/' },
+        { type: 'dir', dev: webDevice, path: '/web' },
+        { type: 'dir', dev: dataDevice, path: '/data' },
+        { type: 'devs', path: '/dev' },
+        { type: 'devpts', path: '/dev/pts' },
+        { type: 'proc', path: '/proc' },
+        { type: 'sys', path: '/sys' },
+      ],
+      diskImageType,
+      diskImageUrl,
+    });
+
     const resize = () => {
       const displayWidth = display.offsetWidth || 1024;
       const displayHeight = display.offsetHeight || 768;
@@ -75,27 +156,28 @@ async function boot(display, consoleElement, screenWrap, state) {
     };
     resize();
     new ResizeObserver(resize).observe(display);
-    let currentVt = 0;
+
     linux.setActivateConsole((vt) => {
-      currentVt = vt;
       screenWrap.dataset.virtualTerminal = String(vt);
       screenWrap.style.zIndex = vt === 7 ? '5' : '1';
-      state.textContent = vt === 7 ? 'Linux listo · Alpine + Xorg + i3' : 'Iniciando Xorg y escritorio…';
+      setState(state, vt === 7 ? 'Linux listo · Alpine + Xorg + i3' : 'Iniciando Xorg y escritorio…');
     });
     linux.setCustomConsole((data) => {
       const text = typeof data === 'string'
         ? data
         : new TextDecoder().decode(data instanceof Uint8Array ? data : new Uint8Array(data));
-      consoleElement.textContent += text;
-      if (consoleElement.textContent.length > 12000) consoleElement.textContent = consoleElement.textContent.slice(-12000);
+      logConsole(consoleElement, text.endsWith('\n') ? text : `${text}\n`);
     }, 80, 24);
-    state.textContent = 'Iniciando Xorg y escritorio…';
-    // Start only the graphical services that this WebVM image needs.
-    while (true) await linux.run('/bin/sh', ['-c', 'mkdir -p /run /run/lock /run/dbus /run/lightdm; chown lightdm:lightdm /run/lightdm; /usr/bin/dbus-daemon --system --fork; exec /usr/bin/lightdm --debug'], { cwd: '/', uid: 0, gid: 0 });
+
+    setState(state, 'Arrancando Alpine, Xorg y i3…');
+    while (true) {
+      await linux.run('/bin/sh', ['-c', BOOT_COMMAND], { cwd: '/', uid: 0, gid: 0 });
+    }
   } catch (error) {
-    state.textContent = 'No se pudo iniciar Linux';
+    setState(state, 'No se pudo iniciar Linux');
     consoleElement.hidden = false;
-    consoleElement.textContent = `${error.message}\n\nRevisa COOP/COEP, la imagen Alpine gráfica y la consola del navegador.`;
+    logConsole(consoleElement, error.message);
+    logConsole(consoleElement, 'Revisa COOP/COEP, la imagen Alpine gráfica y la consola del navegador.');
   }
 }
 
