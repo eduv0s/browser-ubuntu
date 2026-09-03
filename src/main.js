@@ -2,16 +2,18 @@ import './style.css';
 
 const APP_VERSION = '0.8.0-webvm-graphics';
 const CHEERPX_VERSION = '1.3.9';
-// Official WebVM Alpine graphical image. We mirror the URL exposed on webvm.io and
-// serving from GitHub Pages so the browser can fetch it with CORS enabled.
-// If the Pages URL is unreachable, the runtime falls back to the WebVM gateway
-// (Cloudflare Worker over wss), which is the canonical WebVM setup.
-const BASE_IMAGE = 'https://eduv0s.github.io/browser-ubuntu/alpine-cheerpx-i3.ext2';
+// Alpine graphical image served from the same origin (local dev: Vite public/;
+// production Netlify: CDN static file). During 'npm run build:netlify' the image
+// is downloaded into public/ before the build so the CDN picks it up.
+const BASE_IMAGE = '/alpine-cheerpx-i3.ext2';
 const WSS_FALLBACK = 'wss://disks.webvm.io/alpine_20251007.ext2';
 const CONSENT_KEY = 'browser-ubuntu-consent';
 const IDB_DEVICE_NAME = 'browser-ubuntu-cheerpx-overlay-v1';
 const BOOT_COMMAND =
-  'mkdir -p /run/lock /run/dbus /run/lightdm; chown lightdm:lightdm /run/lightdm; /usr/bin/dbus-daemon --system --fork; exec /usr/bin/lightdm --debug';
+  'mkdir -p /run/lock /run/dbus /run/lightdm; ' +
+  'chown lightdm:lightdm /run/lightdm; ' +
+  '/usr/bin/dbus-daemon --system --fork; ' +
+  'exec /usr/bin/lightdm --debug';
 
 const app = document.querySelector('#app');
 let linux;
@@ -75,13 +77,11 @@ function logConsole(consoleElement, message) {
   }
 }
 
-// Translate the requested image URL into the device descriptor expected by
-// CheerpX.Linux.create(). Mirrors the WebVM implementation:
-//   - diskImageType "cloud"  + URL wss:// -> CheerpX.CloudDevice
-//   - diskImageType "bytes"  + URL https -> CheerpX.HttpBytesDevice
-// The wrapper around IDBDevice+OverlayDevice keeps the original image untouched
-// and persists writes into IndexedDB.
-function diskImageFor(url) {
+// Resolve the image URL to the CheerpX device descriptor.
+// Official WebVM pattern:
+//   wss:// URL  -> { diskImageType: 'cloud' }  (CheerpX.CloudDevice)
+//   https://URL -> { diskImageType: 'bytes' }   (CheerpX.HttpBytesDevice)
+function resolveImageConfig(url) {
   if (url.startsWith('wss://') || url.startsWith('ws://')) {
     return { diskImageType: 'cloud', diskImageUrl: url };
   }
@@ -89,7 +89,7 @@ function diskImageFor(url) {
 }
 
 async function createOverlayDevice(CheerpX, url) {
-  const config = diskImageFor(url);
+  const config = resolveImageConfig(url);
   if (config.diskImageType === 'cloud') {
     const base = await CheerpX.CloudDevice.create(config.diskImageUrl);
     idbDevice = await CheerpX.IDBDevice.create(IDB_DEVICE_NAME);
@@ -112,7 +112,7 @@ async function boot(display, consoleElement, screenWrap, state) {
     let baseUrl = BASE_IMAGE;
     let overlayDevice;
     try {
-      setState(state, `Descargando imagen: ${new URL(baseUrl).host}…`);
+      setState(state, `Descargando imagen desde ${new URL(baseUrl, location.href).host}…`);
       overlayDevice = await createOverlayDevice(CheerpX, baseUrl);
     } catch (error) {
       logConsole(consoleElement, `Fallo cargando ${baseUrl}: ${error.message}`);
@@ -128,7 +128,7 @@ async function boot(display, consoleElement, screenWrap, state) {
 
     const webDevice = await CheerpX.WebDevice.create('');
     const dataDevice = await CheerpX.DataDevice.create();
-    const { diskImageType, diskImageUrl } = diskImageFor(baseUrl);
+    const { diskImageType, diskImageUrl } = resolveImageConfig(baseUrl);
 
     setState(state, 'Inicializando kernel Linux…');
     linux = await CheerpX.Linux.create({

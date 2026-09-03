@@ -1,3 +1,5 @@
-
 node_modules/
-scripts/*.bak
+dist/
+*.ext2
+.env
+*.local

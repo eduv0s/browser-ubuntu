@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:netlify": "npm run prepare:image && vite build",
+    "prepare:image": "node scripts/prepare-image.mjs",
     "test": "vitest run",
     "preview": "vite preview"
   },

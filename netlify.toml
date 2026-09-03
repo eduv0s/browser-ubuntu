@@ -1,8 +1,23 @@
 [build]
-  command = "npm run build"
+  command = "npm run build:netlify"
   publish = "dist"
   [build.environment]
     NODE_VERSION = "18"
+
+# Pre-download the Alpine ext2 image so Netlify's CDN serves it with CORS.
+# CheerpX.HttpBytesDevice needs plain HTTPS + CORS + byte-range support, which
+# Netlify's static CDN provides out of the box. This avoids building a new
+# image and reuses the Alpine graphical image already published in the
+# browser-ubuntu GitHub Release.
+[[headers]]
+  for = "/alpine-cheerpx-i3.ext2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Content-Type = "application/octet-stream"
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, HEAD"
+    Access-Control-Allow-Headers = "*"
+    Accept-Ranges = "bytes"
 
 [[redirects]]
   from = "/*"
